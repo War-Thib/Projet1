@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register to my website</title>
+  </head>
+  <body>
+    <p>Register</p>
+    <form action="/register" method="get">
+      <p>First name : <input type="text" name="firstname"></input></p>
+      <p>Last name : <input type="text" name="lastname"></input></p>
+      <p>Country : <input type="text" name="country"></input></p>
+      <p>Gender :
+        <input type="radio" name="gender" value="M">Male</input>
+        <input type="radio" name="gender" value="F">Female</input>
+        <input type="radio" name="gender" value="X">X</input>
+      </p>
+      <p>Email : <input type="email" name="email"></input></p>
+      {% if error1 %}
+    	<strong><p style="color:red">{{ error1 }}</p></strong>
+    	{% endif %}
+      <p>Phone : <input type="text" name="phone"></input></p>
+      <p>Password : <input type="password" name="password"></input></p>
+      <p>Confirm password : <input type="password" name="confirmpassword"></input></p>
+    	{% if error %}
+    	<strong><p style="color:red">{{ error }}</p></strong>
+    	{% endif %}
+      <p><input type="submit" value="Register"></input></p>
+    </form>
+  </body>
+</html>
