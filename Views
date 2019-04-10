@@ -1,0 +1,54 @@
+'''
+Created on Dec 20, 2018
+
+@author: groupe62
+'''
+
+from django.shortcuts import render, redirect
+from Facebook.models import User
+
+
+userlist = {'1': 'Alex','2' : 'Pierre','3': 'Jean'}
+
+def usernames(request):
+    return render(request, 'usernames.html', {'users':userlist})
+
+def login(request):
+    if 'email' in request.GET and 'password' in request.GET:
+        enteredEmail = request.GET['email']
+        enteredPassword = request.GET['password']
+        if len(User.objects.filter(email=enteredEmail).filter(password=enteredPassword)) == 1:
+            return render(request, 'ok.html')
+        else:
+            return render(request, 'login.html', {'error': 'Wrong email and/or password'})
+    else: 
+        return render(request, 'login.html')
+    
+
+def register(request):
+    if 'email' in request.GET:
+        enteredEmail = request.GET['email']
+        newUser = User(firstname=request.GET['firstname'],
+                      lastname=request.GET['lastname'], 
+                      country=request.GET['country'],
+                      email=request.GET['email'], 
+                      phone=request.GET['phone'], 
+                      password=request.GET['password'],
+                      gender=request.GET['gender'])
+        if len(User.objects.filter(email=enteredEmail)) == 1:
+            return render(request, 'register.html', {'error1': 'This email is already used.'})
+        elif request.GET['password'] != request.GET['confirmpassword']:
+            return render(request, 'register.html', {'error': 'Passwords do not match.'})
+        else:
+            newUser.save()
+            return redirect('/login')
+    else:
+        return render(request, 'register.html')
+    
+
+
+def ok(request):
+    if 'email' in request.session:
+        email = request.session['email']
+
+    return render(request, 'ok.html', {'email' : request.session['email']})
