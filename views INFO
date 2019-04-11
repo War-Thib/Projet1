@@ -1,3 +1,58 @@
+from django.shortcuts import render, redirect, reverse
+from django.template.context_processors import request
+from solvay2019.models import *
+from django.http.response import HttpResponse
+
+def register (request):
+    
+    if 'username' in request.GET:
+            user = User(username=request.GET['username'],
+                           password=request.GET['password'],)
+            
+            user.save()
+            request.session['user_id']=user.id
+            return redirect('/home')
+    else:
+        return render(request, 'register.html')
+    
+def home(request):
+    
+    confessions = Publi.objects.all()
+    
+    if 'search' in request.GET:
+        
+        search = request.GET['search']
+        if len(Hashtag.objects.filter(text=search)) >= 1:
+            hashtags = Hashtag.objects.get(text=search)
+            resultats = hashtags.publication.all()
+            print(resultats)
+                
+            return render (request, 'home.html', {'resultats': resultats})
+        else:
+            return HttpResponse ('pas de résultat')          
+                
+        
+    return render (request, 'home.html', {'post': confessions})
+
+
+def login(request):
+    
+    if 'username' in request.GET and 'password' in request.GET:
+        username= request.GET['username']
+        password = request.GET['password']
+        if len(User.objects.filter(username=username).filter(password=password)) == 1:
+            user = User.objects.get(username=username)
+            request.session['user_id'] = user.id
+            return redirect(home)
+
+        else:
+            return render(request, 'login.html', {'error': 'Bad login or password.'})
+    else: 
+        return render(request, 'login.html')
+    
+    
+    
+    
 def publication(request):
     
     
@@ -7,19 +62,33 @@ def publication(request):
                       )
         confession.save()
         hashtags= request.GET['hashtags']
-        listhashtags = hashtags.split("#")
+        
+        listhashtags = hashtags.split()
+        print(listhashtags)
         for v in listhashtags:
             if len(Hashtag.objects.filter(text=v)) == 1:
                 hashtags = Hashtag.objects.get(text=v)
                 hashtags.save()
                 hashtags.publication.add(confession)
-                return redirect('/home')
+                
             else:     
-                hashtags = v
+                hashtags = Hashtag(text=v)
                 hashtags.save()
                 hashtags.publication.add(confession)
-                return redirect('/home')
+                
+        return redirect('/home')
     else :
               
         return render(request, 'publication.html')
+
+
+def comment(request):
+    
+    return render(request, 'comment.html')
+
+
+
+
+
+
 
