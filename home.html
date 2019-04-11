@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+	Home
+
+
+{% endblock %}
+
+{% block body %}
+
+
+		{% for v in post %}
+			
+			<p> {{v.titre}}</p></div>
+			<p> {{v.confession}}</p>
+			<p> 
+			<form action="/comment" method= 'GET'>
+			<input type="hidden" name="postCom" value={{v.id}}></input>
+			<input type="submit" value="Comment"></input>
+			</form>
+			<form method= 'GET'>
+			<input type="hidden" name="postLike" value={{v.id}}></input>
+			<input type="submit" value="Like"></input>
+			</form>
+			<form method= 'GET'>
+			<input type="hidden" name="postDislike" value={{v.id}}></input>
+			<input type="submit" value="Dislike"></input>
+			</form>
+			</p>
+		{% endfor %}
+		<br/>
+		
+	<form method='GET'>
+		<label for='search'> Search hashtag :</label>
+		<input type='text' name='search' id='search'>
+		<input type='submit' value='Search'>
+	</form>
+	
+		<br/>
+		
+		{% for f in resultats %}
+		
+			<p> {{f.titre}}</p></div>
+			<p> {{f.confession}}</p>
+		
+		{% endfor %}
+		    
+		    
+    
+{% endblock %}	
