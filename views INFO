@@ -1,0 +1,25 @@
+def publication(request):
+    
+    
+    if 'confession' in request.GET and 'titre' in request.GET and 'hashtags' in request.GET:
+        confession = Publi(titre=request.GET['titre'],
+                      confession=request.GET['confession'],
+                      )
+        confession.save()
+        hashtags= request.GET['hashtags']
+        listhashtags = hashtags.split("#")
+        for v in listhashtags:
+            if len(Hashtag.objects.filter(text=v)) == 1:
+                hashtags = Hashtag.objects.get(text=v)
+                hashtags.save()
+                hashtags.publication.add(confession)
+                return redirect('/home')
+            else:     
+                hashtags = v
+                hashtags.save()
+                hashtags.publication.add(confession)
+                return redirect('/home')
+    else :
+              
+        return render(request, 'publication.html')
+
