@@ -7,11 +7,12 @@ def register (request):
     
     if 'username' in request.GET:
             user = User(username=request.GET['username'],
-                           password=request.GET['password'],)
+                           password=request.GET['password'],
+                           type='C')
             
             user.save()
             request.session['user_id']=user.id
-            return redirect('/home')
+            return redirect('/login')
     else:
         return render(request, 'register.html')
     
@@ -19,6 +20,7 @@ def home(request):
     
     confessions = Publi.objects.all()
     
+        
     if 'search' in request.GET:
         
         search = request.GET['search']
@@ -29,10 +31,23 @@ def home(request):
                 
             return render (request, 'home.html', {'resultats': resultats})
         else:
-            return HttpResponse ('pas de résultat')          
-                
+            return HttpResponse ('pas de résultat') 
         
-    return render (request, 'home.html', {'post': confessions})
+        
+    if 'user_id' in request.session:
+        user = User.objects.get(id=request.session['user_id'])
+        if 'commentaire' in request.GET:
+            publi = Publi.objects.get(id=request.GET['postCom'])
+            commentaire = Comment(comment = request.GET['commentaire'],
+                                  auteur = user,
+                                  publi = publi)
+            commentaire.save()
+    
+        return render (request, 'home.html', {'post': confessions}, {'user': user})        
+    
+    else :    
+    
+        return render (request, 'home.html', {'post': confessions})
 
 
 def login(request):
@@ -87,8 +102,14 @@ def comment(request):
     return render(request, 'comment.html')
 
 
-
-
+def logout(request):
+    if 'user_id' in request.session:
+        del request.session['user_id']
+        request.session['message'] = 'You were successfully disconnected'
+        return redirect(home)
+    else:
+        return redirect(home)
+    
 
 
 
