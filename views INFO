@@ -1,3 +1,10 @@
+'''
+Created on Apr 11, 2019
+
+@author: groupe62
+'''
+
+
 from django.shortcuts import render, redirect, reverse
 from django.template.context_processors import request
 from solvay2019.models import *
@@ -17,22 +24,15 @@ def register (request):
         return render(request, 'register.html')
     
 def home(request):
-    
+    user = None
     confessions = Publi.objects.all()
+    errors =[]
     
-        
     if 'search' in request.GET:
-        
         search = request.GET['search']
         if len(Hashtag.objects.filter(text=search)) >= 1:
             hashtags = Hashtag.objects.get(text=search)
-            resultats = hashtags.publication.all()
-            print(resultats)
-                
-            return render (request, 'home.html', {'resultats': resultats})
-        else:
-            return HttpResponse ('pas de résultat') 
-        
+            confessions = hashtags.publication.all()
         
     if 'user_id' in request.session:
         user = User.objects.get(id=request.session['user_id'])
@@ -42,12 +42,21 @@ def home(request):
                                   auteur = user,
                                   publi = publi)
             commentaire.save()
-    
-        return render (request, 'home.html', {'post': confessions}, {'user': user})        
-    
-    else :    
-    
-        return render (request, 'home.html', {'post': confessions})
+        if 'postLike' in request.GET:
+            publi_like = Publi.objects.get(id=request.GET['postLike'])
+            if len(Like.objects.filter(user_like = user, publi_like = publi_like)) == 0:
+                new_like = Like(user_like = user,
+                            publi_like = publi_like)
+                
+                new_like.save()
+        if 'postDislike' in request.GET:
+            publi_dislike = Publi.objects.get(id=request.GET['postDislike'])
+            if len(Dislike.objects.filter(user_dislike = user, publi_dislike = publi_dislike)) == 0:    
+                new_dislike = Dislike(user_dislike = user,
+                            publi_dislike = publi_dislike)
+                new_dislike.save()
+        
+    return render (request, 'home.html', {'post': confessions, 'user': user})
 
 
 def login(request):
@@ -97,9 +106,6 @@ def publication(request):
         return render(request, 'publication.html')
 
 
-def comment(request):
-    
-    return render(request, 'comment.html')
 
 
 def logout(request):
