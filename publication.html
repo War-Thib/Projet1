@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Se Confesser
+{% endblock %}
+
+{% block body %}
+
+<form method='GET'>
+	<label for='titre'>Titre :</label><br/>
+	<input type='text' required placeholder='Titre' name='titre' id='titre'><br/>
+	<label for='confession'>Confessez-vous mon enfant :</label><br/>
+    <textarea name="confession" cols="40" rows="10" placeholder= '...'></textarea>
+    <textarea name="hashtags" cols="40" rows="4" placeholder= '#voshashtags#'></textarea>    
+    <br/>
+	<input type='submit' value='Trop tard'>
+</form>
+
+
+
+	
+{% endblock %}
