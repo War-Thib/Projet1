@@ -14,6 +14,8 @@
 
 {% block body %}
 
+
+
 	{% if request.session.user_id %}
 			<h1>Connected</h1>
 	
@@ -21,6 +23,9 @@
 		<center>
 		<form action="/logout" method="get">
 		<input type='submit' value='Logout'>
+		</form>
+		<form action="/publication" method="get">
+		<input type='submit' value='Publier'>
 		</form>
 		</center>
 		
@@ -33,57 +38,51 @@
 					</form>
 					
 					<br/>
-			
-	
+					
+		{% if confessions|length == 0 %}
+		<p> Y'a rien" </p>
+		{% endif %}
+									
 			{% for v in post %}
+					
+				    <h2><strong> {{v.titre}} </strong></h2></div>
+				    <fieldset><p> {{v.confession}}</fieldset></p>
+				    <p><form method= 'GET'>
+					<input type="hidden" name="postLike" value={{v.id}}></input>
+					<input type="submit" value="Like {{v.publi_like.all|length}}"></input>
+					</form>
+				    <form method= 'GET'>
+					<input type="hidden" name="postDislike" value={{v.id}}></input>
+					<input type="submit" value="Dislike {{v.publi_dislike.all|length}}"></input>
+					</form></p>
+				    <p><strong> Commentaires </strong></p></div>
+					    {% for m in v.publi.all %}
+					    <fieldset><p><strong> {{m.auteur}} </strong>: {{m.comment}} </fieldset></p>
+						
+						{% endfor %}
+						
+						
+					
 				
-				    <p><strong> {{v.titre}} </strong></p></div>
-				    <p> {{v.confession}}</p>
+					
 				
 					<p> 
 					<form method='GET'>
-			        <label for='commentaire'>Commentaires: merci de respecter les courageux anonymes:</label><br/>
-		            <textarea name="commentaire" cols="60" rows="2" placeholder= '...'></textarea>
+		            <textarea name="commentaire" cols="60" rows="2" placeholder= 'Commentaires: merci de respecter les courageux anonymes'></textarea>
 		            </div>
 		            <input type="hidden" name="postCom" value={{v.id}}></input>
 					<input type="submit" value="Comment"></input>
 		            </form>
-					<form method= 'GET'>
-					<input type="hidden" name="postLike" value={{v.id}}></input>
-					<input type="submit" value="Like"></input>
-					</form>
-					<form method= 'GET'>
-					<input type="hidden" name="postDislike" value={{v.id}}></input>
-					<input type="submit" value="Dislike"></input>
-					</form>
+					
+					
 					</p>
 					
 			{% endfor %}
 			       
-			{% for f in resultats %}
 			
-				<p><strong> {{f.titre}} </strong></p></div>
-				<p> {{f.confession}}</p>
-				
-				<p> 
-					<form method='GET'>
-			        <label for='commentaire'>Commentaires: merci de respecter les courageux anonymes:</label><br/>
-		            <textarea name="commentaire" cols="60" rows="2" placeholder= '...'></textarea>
-		            </div>
-		            <input type="hidden" name="postCom" value={{f.id}}></input>
-					<input type="submit" value="Comment"></input>
-		            </form>
-					<form method= 'GET'>
-					<input type="hidden" name="postLike" value={{f.id}}></input>
-					<input type="submit" value="Like"></input>
-					</form>
-					<form method= 'GET'>
-					<input type="hidden" name="postDislike" value={{f.id}}></input>
-					<input type="submit" value="Dislike"></input>
-					</form>
-					</p>
-			
-			{% endfor %}
+			<form action="/home" method="get">
+			<input type='submit' value='Home page'>
+			</form>
 	
 	{% else %}
 			
@@ -94,6 +93,9 @@
 		<form action="/login" method="get">
 		<input type='submit' value='Login'>
 		</form>
+		<form action="/publication" method="get">
+		<input type='submit' value='Publier'>
+		</form>
 		</center>
 		
 		<form method='GET'>
@@ -101,28 +103,34 @@
 			<input type='text' name='search' id='search'>
 			<input type='submit' value='Search'>
 		</form>
+		
+			
+			
+			{% if confessions|length == 0 %}
+				<p> Y'a rien" </p>
+			{% endif %}
 	
 			{% for v in post %}
 				
-				<p><strong> {{v.titre}} </strong></p></div>
-				<p> {{v.confession}}</p>
+				
+				
+				<h2><strong> {{v.titre}} </strong></h2></div>
+				<fieldset><p> {{v.confession}}</fieldset></p>
+				<p><strong> Commentaires </strong></p></div>
+				    {% for m in v.publi.all %}
+				    <fieldset><p><strong> {{m.auteur}} </strong>: {{m.comment}} </fieldset></p>
+					{% endfor %}
 				
 					
 			{% endfor %}
 			
 		
-		
-			<br/>
 			
-			{% for f in resultats %}
-			
-				<p><strong> {{f.titre}} </strong></p></div>
-				<p> {{f.confession}}</p>
-			
-			{% endfor %}
-			
+			<form action="/home" method="get">
+			<input type='submit' value='Home page'>
+			</form>
 	
 	{% endif %}		    
 			    
     
-{% endblock %}	
+{% endblock %}		
